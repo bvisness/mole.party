@@ -19,8 +19,8 @@ import (
 const BASE_URL = "https://mole.party/"
 const WS_BASE_URL = "wss://mole.party/"
 
-// const BASE_URL = "http://localhost:8080/"
-// const WS_BASE_URL = "ws://localhost:8080/"
+// const BASE_URL = "http://localhost:8989/"
+// const WS_BASE_URL = "ws://localhost:8989/"
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -222,6 +222,6 @@ func RunApp() {
 		}
 	}()
 
-	log.Print("Listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Print("Listening on port 8989")
+	log.Fatal(http.ListenAndServe(":8989", nil))
 }
