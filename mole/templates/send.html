@@ -1,0 +1,60 @@
+{{ template "base.html" . }}
+
+{{ define "body" }}
+<div class="flex justify-center">
+    <div class="w-100 mw6 pa3 tc">
+        <form id="form" class="dn flex flex-column">
+            <div class="b">Send a link to the other device:</div>
+            <input class="mt2" id="url" type="url" placeholder="Paste a URL..." required>
+            <input class="mt2" type="submit" value="Go!">
+        </form>
+        <div id="msg" class="dn">
+            <span id="msg-text"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function init() {
+        function showMsg(msg) {
+            document.getElementById("form").classList.remove("flex");
+            document.getElementById("msg").classList.remove("dn");
+            document.getElementById("msg-text").innerText = msg;
+        }
+
+        const id = new URLSearchParams(window.location.search).get("id");
+        if (!id) {
+            showMsg("Invalid code. Try scanning again.");
+            return;
+        }
+        // window.history.replaceState(null, "", window.location.pathname);
+
+        const form = document.getElementById("form");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const response = await fetch("{{ url "send" }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: id,
+                    url: document.getElementById("url").value,
+                }),
+            });
+
+            if (response.ok) {
+                showMsg("Your link sent successfully!");
+            } else if (response.status === 410 /* Gone */) {
+                showMsg("That code is expired. Please try again.");
+            } else if (response.status === 404 /* Not Found */) {
+                showMsg("That code was not valid. Please try again.");
+            } else {
+                showMsg("Something went wrong sending your link. Please try again.");
+            }
+        });
+    }
+    init();
+</script>
+{{ end }}

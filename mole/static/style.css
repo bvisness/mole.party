@@ -1,0 +1,14 @@
+body {
+    background-color: #f6f6f6;
+    color: #141414;
+    font-family: sans-serif;
+}
+
+#code svg {
+    height: 65vh;
+}
+
+#explainer {
+    margin-top: 5vh;
+    font-size: 5vh;
+}

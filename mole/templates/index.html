@@ -1,0 +1,37 @@
+{{ template "base.html" . }}
+
+{{ define "body" }}
+<div class="tc absolute absolute--fill">
+    <div class="h-100 flex flex-column justify-center ph3">
+        <div id="code" class="flex justify-center"></div>
+        <div id="explainer">Scan the code to send a link to this device.</div>
+    </div>
+</div>
+<script>
+    const { QrCode } = qrcodegen;
+    const id = "{{ .ID }}";
+
+    const qr = QrCode.encodeText("{{ url "send" }}" + `?id=${id}`, QrCode.Ecc.MEDIUM);
+    document.getElementById("code").innerHTML = toSvgString(qr, 0, "#FFFFFF00", "#141414");
+
+    async function listen() {
+        const ws = new WebSocket("{{ wsurl "listen" }}");
+        await new Promise((resolve, reject) => {
+            ws.addEventListener("open", e => resolve(e));
+            ws.addEventListener("error", e => reject(e));
+        });
+
+        console.log(`Waiting for URL for id ${id}`);
+        const urlMsg = await new Promise((resolve, reject) => {
+            ws.addEventListener("message", e => resolve(JSON.parse(e.data)));
+            ws.addEventListener("error", e => reject(e));
+            ws.send(JSON.stringify({ id: id }));
+        });
+
+        window.location = urlMsg.url;
+    }
+    listen();
+
+    // TODO: Hide the code after it expires
+</script>
+{{ end }}
