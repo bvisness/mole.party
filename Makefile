@@ -1,5 +1,5 @@
 build: ## Rebuild the app binary
-    go build -o bin/mole .
+	go build -o bin/mole .
 
 pull: ## Pull the latest code from GitHub
 	git fetch --all
